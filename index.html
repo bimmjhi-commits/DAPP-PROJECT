@@ -2,6 +2,83 @@
 <html lang="id" class="dark">
   <head>
     <meta charset="UTF-8" />
+    <script>
+      (function() {
+        // Safe Vite HMR WebSocket stub for AI Studio proxy environment
+        var NativeWebSocket = window.WebSocket;
+        if (NativeWebSocket) {
+          window.WebSocket = function(url, protocols) {
+            var isViteHmr = (typeof protocols === 'string' && protocols === 'vite-hmr') ||
+                            (Array.isArray(protocols) && protocols.indexOf('vite-hmr') !== -1) ||
+                            (typeof url === 'string' && (url.indexOf('vite-hmr') !== -1 || url.indexOf('token=') !== -1));
+            if (isViteHmr) {
+              var target = new EventTarget();
+              var dummy = {
+                readyState: 1, // WebSocket.OPEN
+                CONNECTING: 0,
+                OPEN: 1,
+                CLOSING: 2,
+                CLOSED: 3,
+                url: String(url),
+                protocol: 'vite-hmr',
+                extensions: '',
+                bufferedAmount: 0,
+                binaryType: 'blob',
+                onopen: null,
+                onclose: null,
+                onerror: null,
+                onmessage: null,
+                send: function() {},
+                close: function() {
+                  dummy.readyState = 3;
+                  if (typeof dummy.onclose === 'function') dummy.onclose(new CloseEvent('close'));
+                  target.dispatchEvent(new CloseEvent('close'));
+                },
+                addEventListener: function(type, listener, options) {
+                  target.addEventListener(type, listener, options);
+                },
+                removeEventListener: function(type, listener, options) {
+                  target.removeEventListener(type, listener, options);
+                },
+                dispatchEvent: function(event) {
+                  return target.dispatchEvent(event);
+                }
+              };
+              setTimeout(function() {
+                var openEvt = new Event('open');
+                if (typeof dummy.onopen === 'function') dummy.onopen(openEvt);
+                target.dispatchEvent(openEvt);
+              }, 0);
+              return dummy;
+            }
+            return new NativeWebSocket(url, protocols);
+          };
+          window.WebSocket.prototype = NativeWebSocket.prototype;
+          window.WebSocket.CONNECTING = 0;
+          window.WebSocket.OPEN = 1;
+          window.WebSocket.CLOSING = 2;
+          window.WebSocket.CLOSED = 3;
+        }
+
+        // Suppress Vite WebSocket closed errors from polluting error trackers
+        window.addEventListener('unhandledrejection', function(event) {
+          var reason = event.reason;
+          var msg = (reason && (reason.message || String(reason))) || '';
+          if (msg.indexOf('WebSocket closed without opened') !== -1 || msg.indexOf('vite:ws') !== -1 || (reason && reason.stack && reason.stack.indexOf('@vite/client') !== -1)) {
+            event.preventDefault();
+            event.stopImmediatePropagation();
+          }
+        });
+        window.addEventListener('error', function(event) {
+          var msg = event.message || '';
+          var filename = event.filename || '';
+          if (msg.indexOf('WebSocket closed without opened') !== -1 || filename.indexOf('@vite/client') !== -1) {
+            event.preventDefault();
+            event.stopImmediatePropagation();
+          }
+        });
+      })();
+    </script>
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
     <title>DAPP PROJECT TOOLS</title>
     <meta name="description" content="Platform All-in-One Tools & Utilities - DAPP PROJECT" />

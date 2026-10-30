@@ -451,7 +451,7 @@ async function startServer() {
   // --- VITE MIDDLEWARE OR STATIC SERVING ---
   if (!isProd) {
     const vite = await createViteServer({
-      server: { middlewareMode: true },
+      server: { middlewareMode: true, hmr: false },
       appType: 'custom',
     });
     app.use(vite.middlewares);
