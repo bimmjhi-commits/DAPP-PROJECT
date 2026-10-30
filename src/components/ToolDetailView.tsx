@@ -34,7 +34,8 @@ export const ToolDetailView: React.FC<ToolDetailViewProps> = ({ tool, renderIcon
   const [errorMsg, setErrorMsg] = useState<string | null>(null);
 
   const buildApiUrl = () => {
-    const url = new URL(tool.endpoint);
+    const base = typeof window !== 'undefined' ? window.location.origin : 'http://localhost:3000';
+    const url = new URL(tool.endpoint, base);
     Object.entries(params).forEach(([key, val]) => {
       url.searchParams.set(key, val);
     });

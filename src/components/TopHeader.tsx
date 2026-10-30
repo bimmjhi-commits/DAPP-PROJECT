@@ -1,5 +1,6 @@
 import React from 'react';
 import { Menu, Headphones, User } from 'lucide-react';
+import { PWAInstallButton } from './PWAInstallButton';
 
 interface TopHeaderProps {
   userName?: string;
@@ -32,8 +33,10 @@ export const TopHeader: React.FC<TopHeaderProps> = ({
         </div>
       </div>
 
-      {/* Right Area: Display Ornaments */}
+      {/* Right Area: Display Ornaments & PWA Install Button */}
       <div className="flex items-center gap-2 shrink-0">
+        <PWAInstallButton compact={true} />
+
         <div
           className="w-11 h-11 rounded-[18px] flex items-center justify-center bg-white/10 backdrop-blur-xl border border-white/20 shadow-lg relative overflow-hidden shrink-0"
         >

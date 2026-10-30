@@ -8,9 +8,11 @@ import {
   ExternalLink,
   Sparkles,
   AlertCircle,
-  X
+  X,
+  Play
 } from 'lucide-react';
 import { motion, AnimatePresence } from 'motion/react';
+import { AiODownloaderPage } from './AiODownloaderPage';
 
 interface ToolsModalProps {
   category: ToolCategory | null;
@@ -49,7 +51,8 @@ export const ToolsModal: React.FC<ToolsModalProps> = ({
 
   const buildApiUrl = () => {
     if (!selectedTool) return '';
-    const url = new URL(selectedTool.endpoint);
+    const base = typeof window !== 'undefined' ? window.location.origin : 'http://localhost:3000';
+    const url = new URL(selectedTool.endpoint, base);
     Object.entries(params).forEach(([key, val]) => {
       url.searchParams.set(key, val);
     });
@@ -85,10 +88,21 @@ export const ToolsModal: React.FC<ToolsModalProps> = ({
       } else {
         const res = await fetch(fullUrl);
         const data = await res.json();
+        
+        console.log("Downloader API Response:", data);
+
+        // Handle case where API returns status:true but result.success:false (common in Sylvatica)
+        if (data.status === true && data.result && data.result.success === false) {
+           throw new Error(data.result.error || data.result.message || 'Gagal mengekstrak media.');
+        }
+
         if (!res.ok || data.status === false) {
           throw new Error(data.message || 'Gagal mengunduh media.');
         }
-        setDownloadResult(data.result || data);
+
+        // Ekstraksi data yang lebih fleksibel (mendukung data.result atau data.data)
+        const extracted = data.result || data.data || data;
+        setDownloadResult(extracted);
       }
     } catch (err: any) {
       setErrorMsg(err.message || 'Terjadi kesalahan.');
@@ -110,7 +124,6 @@ export const ToolsModal: React.FC<ToolsModalProps> = ({
       <AnimatePresence>
         {category && !selectedTool && (
           <div className="fixed inset-0 z-50 flex items-end">
-            {/* Backdrop Blur Gelap */}
             <motion.div 
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
@@ -119,7 +132,6 @@ export const ToolsModal: React.FC<ToolsModalProps> = ({
               onClick={onClose}
             />
             
-            {/* Overlay Bottom Sheet */}
             <motion.div
               initial={{ y: '100%' }}
               animate={{ y: 0 }}
@@ -127,7 +139,6 @@ export const ToolsModal: React.FC<ToolsModalProps> = ({
               transition={{ type: 'spring', damping: 25, stiffness: 300 }}
               className="w-full bg-[#152231] rounded-t-[28px] border-t border-cyan-500/20 relative z-10 flex flex-col"
             >
-              {/* Header */}
               <div className="p-6 flex items-center justify-between shrink-0">
                 <h2 className="text-[13px] font-mono font-bold text-cyan-400 tracking-[0.25em] uppercase">
                   SELECT TOOLS
@@ -140,7 +151,6 @@ export const ToolsModal: React.FC<ToolsModalProps> = ({
                 </button>
               </div>
 
-              {/* Content List */}
               <div className="flex-1 overflow-y-auto max-h-[65vh] px-4 pb-28 space-y-3 custom-scrollbar">
                 {categoryTools.map((tool) => (
                   <button
@@ -165,9 +175,12 @@ export const ToolsModal: React.FC<ToolsModalProps> = ({
 
       {/* LEVEL 2: INPUT URL / FORM OVERLAY */}
       <AnimatePresence>
-        {selectedTool && (
+        {selectedTool && selectedTool.id === 'aio' ? (
+          <div className="fixed inset-0 z-[60] bg-[#0A0E14] overflow-y-auto">
+            <AiODownloaderPage onBack={onBackToCategory} />
+          </div>
+        ) : selectedTool && (
           <div className="fixed inset-0 z-[60] flex items-end">
-            {/* Backdrop Blur Gelap Lebih Pekat */}
             <motion.div 
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
@@ -176,7 +189,6 @@ export const ToolsModal: React.FC<ToolsModalProps> = ({
               onClick={onClose}
             />
 
-            {/* Overlay Bottom Sheet Level 2 */}
             <motion.div
               initial={{ y: '100%' }}
               animate={{ y: 0 }}
@@ -184,7 +196,6 @@ export const ToolsModal: React.FC<ToolsModalProps> = ({
               transition={{ type: 'spring', damping: 25, stiffness: 300 }}
               className="w-full bg-[#152231] rounded-t-[28px] border-t border-cyan-500/20 relative z-10 flex flex-col p-6 pb-28"
             >
-              {/* Header Level 2 */}
               <div className="flex items-center justify-between mb-6">
                 <div className="flex items-center gap-3">
                   <button 
@@ -205,7 +216,6 @@ export const ToolsModal: React.FC<ToolsModalProps> = ({
                 </button>
               </div>
 
-              {/* Form Content */}
               <div className="overflow-y-auto max-h-[70vh] no-scrollbar">
                 <form onSubmit={handleExecute} className="space-y-5">
                   <div className="space-y-4">
@@ -237,26 +247,25 @@ export const ToolsModal: React.FC<ToolsModalProps> = ({
                     ))}
                   </div>
 
-                  <button
-                    type="submit"
-                    disabled={loading}
-                    className="w-full py-4 rounded-xl btn-buka-tool shadow-[0_8px_20px_rgba(0,212,255,0.3)] transition-all active:scale-[0.97] disabled:opacity-50 flex items-center justify-center gap-3"
-                  >
-                    {loading ? (
-                      <>
-                        <RefreshCw className="w-4 h-4 animate-spin" />
-                        <span>PROCESSING...</span>
-                      </>
-                    ) : (
-                      <>
-                        <Download className="w-4 h-4" />
-                        <span>BUKA TOOL</span>
-                      </>
-                    )}
-                  </button>
+                  {!loading && (
+                    <button
+                      type="submit"
+                      disabled={loading}
+                      className="w-full py-4 rounded-xl btn-buka-tool shadow-[0_8px_20px_rgba(0,212,255,0.3)] transition-all active:scale-[0.97] disabled:opacity-50 flex items-center justify-center gap-3 mt-4"
+                    >
+                      <Download className="w-4 h-4" />
+                      <span>BUKA TOOL</span>
+                    </button>
+                  )}
                 </form>
 
-                {/* Error */}
+                {loading && (
+                  <div className="mt-8 flex flex-col items-center justify-center space-y-3 py-10 animate-pulse">
+                    <RefreshCw className="w-8 h-8 text-cyan-400 animate-spin" />
+                    <p className="text-[10px] font-bold text-cyan-500 tracking-[0.3em] uppercase">FETCHING MEDIA DATA...</p>
+                  </div>
+                )}
+
                 {errorMsg && (
                   <div className="mt-4 bg-red-500/10 border border-red-500/20 p-4 rounded-xl flex items-start gap-3 animate-in fade-in slide-in-from-top-2 duration-300">
                     <AlertCircle className="w-4 h-4 text-red-400 shrink-0 mt-0.5" />
@@ -264,8 +273,7 @@ export const ToolsModal: React.FC<ToolsModalProps> = ({
                   </div>
                 )}
 
-                {/* Result Area */}
-                {(generatedImgUrl || downloadResult) && (
+                {!loading && (generatedImgUrl || downloadResult) && (
                   <div className="mt-6 pt-6 border-t border-white/5 space-y-4 animate-in fade-in zoom-in-95 duration-300">
                     {generatedImgUrl && (
                       <div className="space-y-4">
@@ -292,42 +300,7 @@ export const ToolsModal: React.FC<ToolsModalProps> = ({
                       </div>
                     )}
 
-                    {downloadResult && (
-                      <div className="space-y-3">
-                        <div className="flex gap-3 items-center bg-white/5 p-3 rounded-xl border border-white/5">
-                          {downloadResult.thumbnail && (
-                            <img src={downloadResult.thumbnail} alt="thumb" className="w-16 h-16 object-cover rounded-lg" />
-                          )}
-                          <div className="flex-1 min-w-0">
-                            <p className="text-[11px] font-bold text-white truncate uppercase">{downloadResult.title || 'MEDIA DETECTED'}</p>
-                            <p className="text-[9px] text-cyan-400 font-bold mt-1 tracking-widest uppercase">READY TO DOWNLOAD</p>
-                          </div>
-                        </div>
-                        
-                        <div className="flex flex-col gap-2">
-                          {(downloadResult.video_nowm || downloadResult.url || downloadResult.video) && (
-                            <a
-                              href={downloadResult.video_nowm || downloadResult.url || downloadResult.video}
-                              target="_blank"
-                              rel="noreferrer"
-                              className="w-full py-3.5 bg-[#2CE6FF] text-[#101E2C] font-black text-[10px] rounded-xl text-center tracking-widest flex items-center justify-center gap-2"
-                            >
-                              <Download className="w-4 h-4" /> DOWNLOAD VIDEO HD
-                            </a>
-                          )}
-                          {(downloadResult.audio || downloadResult.music) && (
-                            <a
-                              href={downloadResult.audio || downloadResult.music}
-                              target="_blank"
-                              rel="noreferrer"
-                              className="w-full py-3.5 bg-white/10 text-white font-black text-[10px] rounded-xl text-center tracking-widest flex items-center justify-center gap-2"
-                            >
-                              <Download className="w-4 h-4" /> DOWNLOAD AUDIO
-                            </a>
-                          )}
-                        </div>
-                      </div>
-                    )}
+                    {downloadResult && renderMediaResult(downloadResult)}
                   </div>
                 )}
               </div>
@@ -336,7 +309,6 @@ export const ToolsModal: React.FC<ToolsModalProps> = ({
         )}
       </AnimatePresence>
       
-      {/* Global CSS for thin scrollbar */}
       <style dangerouslySetInnerHTML={{ __html: `
         .custom-scrollbar::-webkit-scrollbar {
           width: 4px;
@@ -352,3 +324,11 @@ export const ToolsModal: React.FC<ToolsModalProps> = ({
     </>
   );
 };
+
+function renderMediaResult(data: any) {
+  return (
+    <div className="space-y-3 p-4 rounded-xl bg-white/5 border border-white/10 text-white">
+      <p className="text-xs font-bold text-cyan-400 font-mono uppercase">{data.title || data.description || 'Media Ready'}</p>
+    </div>
+  );
+}

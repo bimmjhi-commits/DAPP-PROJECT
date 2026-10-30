@@ -16,7 +16,8 @@ import { QuranPage } from './components/QuranPage';
 import { BypassSub4UnlockPage } from './components/BypassSub4UnlockPage';
 import { IpLookupPage } from './components/IpLookupPage';
 import { MusicPage } from './components/MusicPage';
-import { ToolsMainPage } from './components/ToolsMainPage';
+import { ToolsPage } from './pages/ToolsPage';
+import { ToolsBottomSheet } from './components/ToolsBottomSheet';
 import { InformasiPage } from './components/ExtraPages';
 import { BottomNav, NavTab } from './components/BottomNav';
 import { DashboardDrawer } from './components/DashboardDrawer';
@@ -27,6 +28,8 @@ import { ChatGlobalPage } from './components/ChatGlobalPage';
 
 import { FloatingMusicWidget } from './components/FloatingMusicWidget';
 import { CatatanPembukaModal } from './components/CatatanPembukaModal';
+import { PWAInstallButton } from './components/PWAInstallButton';
+import { OfflineIndicator } from './components/OfflineIndicator';
 import { getCurrentUser, setCurrentUser, clearCurrentUser, getLastUser } from './data/userService';
 import { startPresenceHeartbeat, subscribePresence, updatePresenceUser } from './data/presenceService';
 
@@ -41,6 +44,8 @@ export default function App() {
   
   // Navigation State using BottomNav tabs: 'beranda' | 'tools' | 'music' | 'informasi'
   const [activeTab, setActiveTab] = useState<NavTab>('beranda');
+  const [isToolsSheetOpen, setIsToolsSheetOpen] = useState<boolean>(false);
+  const [selectedToolCategory, setSelectedToolCategory] = useState<'downloader' | 'canvas' | 'stalker' | 'maker' | null>(null);
 
   // Dasboard Drawer State (garis tiga)
   const [isDashboardOpen, setIsDashboardOpen] = useState(false);
@@ -200,6 +205,9 @@ export default function App() {
           onOpenMenu={() => setIsDashboardOpen(true)}
         />
 
+        {/* PWA / APK Install Banner */}
+        <PWAInstallButton className="my-1" />
+
         {/* Video Banner */}
         <section aria-label="Banner Video" className="w-full">
           <VideoBanner
@@ -310,19 +318,21 @@ export default function App() {
         </div>
       )}
 
-      {/* TAB: TOOLS */}
+      {/* TAB: TOOLS (FULL DASHBOARD PAGE - BUKAN BOTTOM SHEET) */}
       {activeTab === 'tools' && (
-        <div className="w-full min-h-screen relative z-10 animate-in fade-in slide-in-from-bottom-3 duration-300 bg-black">
-          <ToolsMainPage
-            userName={userName || 'User'}
-            onOpenMenu={() => setIsDashboardOpen(true)}
-            isQuranAudioPlaying={isQuranAudioPlaying}
+        <div className="w-full min-h-screen relative z-10 animate-in fade-in slide-in-from-bottom-3 duration-300 bg-[#070B12]">
+          <ToolsPage
+            initialCategoryId={selectedToolCategory}
+            onBackToHome={() => {
+              setSelectedToolCategory(null);
+              setActiveTab('beranda');
+            }}
+            onOpenIpLookup={() => setIsIpLookupOpen(true)}
             onOpenQuran={() => setIsQuranOpen(true)}
             onOpenSub4Unlock={() => setIsSub4UnlockOpen(true)}
-
-            onOpenIpLookup={() => setIsIpLookupOpen(true)}
             onOpenAiChat={() => setIsAiChatOpen(true)}
             onOpenMusic={() => setActiveTab('music')}
+            onOpenMenu={() => setIsDashboardOpen(true)}
           />
         </div>
       )}
@@ -338,14 +348,30 @@ export default function App() {
       {!isAnyToolOpen && (
         <BottomNav
           currentTab={activeTab}
-          onChangeTab={(newTab) => setActiveTab(newTab)}
+          onChangeTab={(newTab) => {
+            if (newTab === 'beranda') {
+              setSelectedToolCategory(null);
+            }
+            setActiveTab(newTab);
+          }}
+          onOpenTools={() => setIsToolsSheetOpen(true)}
         />
       )}
+
+      {/* TOOLS BOTTOM SHEET DRAWER */}
+      <ToolsBottomSheet
+        isOpen={isToolsSheetOpen}
+        onClose={() => setIsToolsSheetOpen(false)}
+        onSelectCategory={(categoryId) => {
+          setSelectedToolCategory(categoryId);
+          setActiveTab('tools');
+        }}
+        totalTools={5}
+      />
 
       {/* FLOATING MUSIC WIDGET */}
       <FloatingMusicWidget
         onOpenMusicPage={() => {
-
           setIsQuranOpen(false);
           setIsSub4UnlockOpen(false);
           setIsIpLookupOpen(false);
@@ -360,8 +386,14 @@ export default function App() {
         onClose={() => setIsDashboardOpen(false)}
         currentTab={activeTab}
         onSelectTab={(tab) => {
-          setActiveTab(tab);
-          setIsDashboardOpen(false);
+          if (tab === 'tools') {
+            setSelectedToolCategory(null);
+            setActiveTab('tools');
+            setIsDashboardOpen(false);
+          } else {
+            setActiveTab(tab);
+            setIsDashboardOpen(false);
+          }
         }}
 
         onOpenQuran={() => {
@@ -387,6 +419,9 @@ export default function App() {
         onLogout={handleLogout}
         userName={userName}
       />
+
+      {/* OFFLINE STATUS INDICATOR */}
+      <OfflineIndicator />
     </div>
   );
 }

@@ -330,10 +330,17 @@ export const AiChatPage: React.FC<AiChatPageProps> = ({ userName, onBack }) => {
         <header className="h-14 shrink-0 border-b border-[#E5E7EB] px-4 flex items-center justify-between max-w-[720px] mx-auto w-full bg-[#FAFAF9]">
           <div className="flex items-center gap-3">
             <button
+              onClick={onBack}
+              className="p-1.5 rounded-lg text-[#1F2937] hover:bg-[#F3F4F6] transition-colors"
+              title="Back"
+            >
+              <ArrowLeft className="w-5 h-5" />
+            </button>
+            <button
               onClick={() => setSidebarOpen(true)}
               className="md:hidden p-1.5 rounded-lg text-[#1F2937] hover:bg-[#F3F4F6]"
             >
-              <Menu className="w-4 h-4" />
+              <Menu className="w-5 h-5" />
             </button>
             <div className="flex items-center gap-2">
               <span className="text-[14px] font-semibold text-[#1F2937]">
