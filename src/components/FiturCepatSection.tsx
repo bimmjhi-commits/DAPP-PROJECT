@@ -1,11 +1,12 @@
 import React, { useState, useRef } from 'react';
-import { BookOpen, Unlock, Globe, Bot } from 'lucide-react';
+import { BookOpen, Unlock, Globe, Bot, Flame } from 'lucide-react';
 
 interface FiturCepatSectionProps {
   onOpenQuran: () => void;
   onOpenSub4Unlock: () => void;
   onOpenIpLookup: () => void;
   onOpenAiChat: () => void;
+  onOpenSpamNgl: () => void;
 }
 
 export const FiturCepatSection: React.FC<FiturCepatSectionProps> = ({
@@ -13,6 +14,7 @@ export const FiturCepatSection: React.FC<FiturCepatSectionProps> = ({
   onOpenSub4Unlock,
   onOpenIpLookup,
   onOpenAiChat,
+  onOpenSpamNgl,
 }) => {
   const [activeIndex, setActiveIndex] = useState(0);
   const scrollRef = useRef<HTMLDivElement>(null);
@@ -53,6 +55,15 @@ export const FiturCepatSection: React.FC<FiturCepatSectionProps> = ({
       gradient: 'bg-gradient-to-br from-[#7c3aed] via-[#8b5cf6] to-[#a78bfa]',
       action: onOpenAiChat,
       watermarkIcon: <Bot className="absolute -bottom-2 -right-2 w-20 h-20 text-white/10 rotate-12" />
+    },
+    {
+      id: 'spamngl',
+      title: 'SPAM NGL',
+      subtitle: 'ANONYMOUS MESSAGE SENDER',
+      icon: <Flame className="w-6 h-6 text-white" />,
+      gradient: 'bg-gradient-to-br from-[#ea580c] via-[#f97316] to-[#fb923c]',
+      action: onOpenSpamNgl,
+      watermarkIcon: <Flame className="absolute -bottom-2 -right-2 w-20 h-20 text-white/10 rotate-12" />
     },
   ];
 
@@ -135,5 +146,3 @@ export const FiturCepatSection: React.FC<FiturCepatSectionProps> = ({
     </div>
   );
 };
-
-

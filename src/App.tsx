@@ -15,6 +15,7 @@ import { BeritaSection } from './components/BeritaSection';
 import { QuranPage } from './components/QuranPage';
 import { BypassSub4UnlockPage } from './components/BypassSub4UnlockPage';
 import { IpLookupPage } from './components/IpLookupPage';
+import { SpamNglPage } from './components/SpamNglPage';
 import { MusicPage } from './components/MusicPage';
 import { ToolsPage } from './pages/ToolsPage';
 import { ToolsBottomSheet } from './components/ToolsBottomSheet';
@@ -80,13 +81,14 @@ export default function App() {
   const [isQuranOpen, setIsQuranOpen] = useState(false);
   const [isSub4UnlockOpen, setIsSub4UnlockOpen] = useState(false);
   const [isIpLookupOpen, setIsIpLookupOpen] = useState(false);
+  const [isSpamNglOpen, setIsSpamNglOpen] = useState(false);
   const [isAiChatOpen, setIsAiChatOpen] = useState(false);
   const [isChatGlobalOpen, setIsChatGlobalOpen] = useState(false);
   const [isQuranAudioPlaying, setIsQuranAudioPlaying] = useState(false);
   const [isForceCatatanOpen, setIsForceCatatanOpen] = useState(false);
 
   // Cek apakah halaman fitur/tools sedang terbuka (untuk menyembunyikan bottom nav)
-  const isAnyToolOpen = isQuranOpen || isSub4UnlockOpen || isIpLookupOpen || isAiChatOpen || isChatGlobalOpen;
+  const isAnyToolOpen = isQuranOpen || isSub4UnlockOpen || isIpLookupOpen || isAiChatOpen || isChatGlobalOpen || isSpamNglOpen;
 
   // Saat pengguna klik MASUK di Name Entry Page, simpan nama & aktifkan video transisi
   const handleLoginSuccess = (name: string) => {
@@ -107,6 +109,7 @@ export default function App() {
     setIsQuranOpen(false);
     setIsSub4UnlockOpen(false);
     setIsIpLookupOpen(false);
+    setIsSpamNglOpen(false);
     setIsAiChatOpen(false);
     setIsChatGlobalOpen(false);
     setIsQuranAudioPlaying(false);
@@ -243,6 +246,7 @@ export default function App() {
             onOpenSub4Unlock={() => setIsSub4UnlockOpen(true)}
             onOpenIpLookup={() => setIsIpLookupOpen(true)}
             onOpenAiChat={() => setIsAiChatOpen(true)}
+            onOpenSpamNgl={() => setIsSpamNglOpen(true)}
           />
         </section>
 
@@ -300,6 +304,14 @@ export default function App() {
         </div>
       )}
 
+      {isSpamNglOpen && (
+        <div className="fixed inset-0 z-40 bg-site-main overflow-y-auto selection:bg-black selection:text-white animate-in fade-in zoom-in-95 duration-300">
+          <SpamNglPage
+            onBack={() => setIsSpamNglOpen(false)}
+          />
+        </div>
+      )}
+
       {isAiChatOpen && (
         <div className="fixed inset-0 z-40 animate-in fade-in zoom-in-95 duration-300">
           <AiChatPage
@@ -327,7 +339,6 @@ export default function App() {
               setSelectedToolCategory(null);
               setActiveTab('beranda');
             }}
-            onOpenIpLookup={() => setIsIpLookupOpen(true)}
             onOpenQuran={() => setIsQuranOpen(true)}
             onOpenSub4Unlock={() => setIsSub4UnlockOpen(true)}
             onOpenAiChat={() => setIsAiChatOpen(true)}
@@ -375,6 +386,7 @@ export default function App() {
           setIsQuranOpen(false);
           setIsSub4UnlockOpen(false);
           setIsIpLookupOpen(false);
+          setIsSpamNglOpen(false);
           setIsAiChatOpen(false);
           setActiveTab('music');
         }}
@@ -406,6 +418,10 @@ export default function App() {
         }}
         onOpenIpLookup={() => {
           setIsIpLookupOpen(true);
+          setIsDashboardOpen(false);
+        }}
+        onOpenSpamNgl={() => {
+          setIsSpamNglOpen(true);
           setIsDashboardOpen(false);
         }}
         onOpenAiChat={() => {

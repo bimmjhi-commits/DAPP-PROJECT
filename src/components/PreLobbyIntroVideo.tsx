@@ -1,4 +1,4 @@
-import React, { useRef, useEffect, useState } from 'react';
+import React, { useRef, useEffect } from 'react';
 
 interface PreLobbyIntroVideoProps {
   onComplete: () => void;
@@ -8,7 +8,6 @@ const INTRO_VIDEO_2 =
   'https://videotourl.com/videos/1793015991103-a4afce48-a57a-4181-9597-42a5a83b50e9.mp4';
 
 export const PreLobbyIntroVideo: React.FC<PreLobbyIntroVideoProps> = ({ onComplete }) => {
-  const [skipCooldown, setSkipCooldown] = useState<number>(5);
   const videoRef = useRef<HTMLVideoElement | null>(null);
 
   // Autoplay unmuted with browser fallback handling
@@ -41,22 +40,6 @@ export const PreLobbyIntroVideo: React.FC<PreLobbyIntroVideoProps> = ({ onComple
     }
   }, []);
 
-  // Cooldown tombol skip dari 10 sampai 0 detik
-  useEffect(() => {
-    setSkipCooldown(5);
-    const interval = setInterval(() => {
-      setSkipCooldown((prev) => {
-        if (prev <= 1) {
-          clearInterval(interval);
-          return 0;
-        }
-        return prev - 1;
-      });
-    }, 1000);
-
-    return () => clearInterval(interval);
-  }, []);
-
   const handleVideoEnd = () => {
     onComplete();
   };
@@ -75,29 +58,14 @@ export const PreLobbyIntroVideo: React.FC<PreLobbyIntroVideoProps> = ({ onComple
           className="w-full h-full object-cover sm:object-contain scale-110 sm:scale-105 transform origin-center transition-transform duration-300 bg-black"
         />
 
-        {/* Tombol Skip di Kanan Atas dengan Cooldown 10 -> 0 detik */}
+        {/* Tombol Skip di Kanan Atas Tanpa Cooldown */}
         <div className="absolute top-4 sm:top-6 right-4 sm:right-6 z-50">
           <button
-            onClick={() => {
-              if (skipCooldown === 0) {
-                handleVideoEnd();
-              }
-            }}
-            disabled={skipCooldown > 0}
-            className={`px-4 py-2 rounded-xl backdrop-blur-xl border text-xs sm:text-sm font-bold tracking-wider transition-all duration-300 flex items-center gap-1.5 ${
-              skipCooldown > 0
-                ? 'bg-black/50 border-white/20 text-white/50 cursor-not-allowed'
-                : 'bg-white/20 hover:bg-white/30 border-white/40 text-white cursor-pointer shadow-[0_0_15px_rgba(255,255,255,0.4)] active:scale-95'
-            }`}
+            onClick={handleVideoEnd}
+            className="px-4 py-2 rounded-xl backdrop-blur-xl border text-xs sm:text-sm font-bold tracking-wider transition-all duration-300 flex items-center gap-1.5 bg-white/20 hover:bg-white/30 border-white/40 text-white cursor-pointer shadow-[0_0_15px_rgba(255,255,255,0.4)] active:scale-95"
           >
-            {skipCooldown > 0 ? (
-              <span>Lewati ({skipCooldown}s)</span>
-            ) : (
-              <>
-                <span>Lewati</span>
-                <span className="text-base leading-none">→</span>
-              </>
-            )}
+            <span>Lewati</span>
+            <span className="text-base leading-none">→</span>
           </button>
         </div>
 

@@ -12,6 +12,7 @@ import {
   ChevronRight,
   Bot,
   Info,
+  Flame,
 } from 'lucide-react';
 import { NavTab } from './BottomNav';
 
@@ -25,6 +26,7 @@ interface DashboardDrawerProps {
   onOpenSub4Unlock?: () => void;
   onOpenIpLookup?: () => void;
   onOpenAiChat?: () => void;
+  onOpenSpamNgl?: () => void;
   onOpenCatatanPembuka?: () => void;
   onLogout: () => void;
   userName?: string;
@@ -39,6 +41,7 @@ export const DashboardDrawer: React.FC<DashboardDrawerProps> = ({
   onOpenSub4Unlock,
   onOpenIpLookup,
   onOpenAiChat,
+  onOpenSpamNgl,
   onOpenCatatanPembuka,
   onLogout,
   userName,
@@ -84,6 +87,14 @@ export const DashboardDrawer: React.FC<DashboardDrawerProps> = ({
       desc: '114 Surah, Ayat & Audio',
       icon: BookOpen,
       action: () => { onOpenQuran(); onClose(); },
+      isActive: false,
+    },
+    {
+      id: 'spamngl' as any,
+      label: 'SPAM NGL',
+      desc: 'Kirim pesan anonim NGL',
+      icon: Flame,
+      action: () => { if (onOpenSpamNgl) onOpenSpamNgl(); onClose(); },
       isActive: false,
     },
     {
