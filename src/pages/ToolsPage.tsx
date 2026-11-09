@@ -1,26 +1,9 @@
 import React, { useState } from 'react';
 import { 
-  Download, 
-  Video, 
-  PlayCircle, 
-  Share2, 
-  Sparkles, 
-  Award, 
-  QrCode, 
-  Eraser, 
-  Wand2, 
-  Search, 
-  BookOpen, 
-  Layout, 
-  MessageSquare, 
-  Camera, 
-  Smile, 
-  Lock, 
-  Terminal,
-  Globe,
   X,
   Zap,
-  ArrowLeft
+  ArrowLeft,
+  Wrench
 } from 'lucide-react';
 
 export interface ToolsPageProps {
@@ -40,28 +23,7 @@ interface ToolItem {
   icon: React.ReactNode;
 }
 
-const TOOLS_LIST: ToolItem[] = [
-  { title: "TIKTOK DL", sub: "No Watermark HD", icon: <Download className="w-5 h-5 text-[#00D4FF]" /> },
-  { title: "IG REELS DL", sub: "Instagram Media", icon: <Camera className="w-5 h-5 text-[#00D4FF]" /> },
-  { title: "YT DOWNLOADER", sub: "MP3 & MP4 4K", icon: <PlayCircle className="w-5 h-5 text-[#00D4FF]" /> },
-  { title: "FB VIDEO DL", sub: "High Quality Post", icon: <Share2 className="w-5 h-5 text-[#00D4FF]" /> },
-  { title: "TWITTER MEDIA", sub: "Save Tweet Clips", icon: <Globe className="w-5 h-5 text-[#00D4FF]" /> },
-  { title: "BRAT GENERATOR", sub: "Aesthetic Text Art", icon: <Sparkles className="w-5 h-5 text-[#00D4FF]" /> },
-  { title: "SERTIFIKAT TOLOL", sub: "Fun Certificate", icon: <Award className="w-5 h-5 text-[#00D4FF]" /> },
-  { title: "QR GENERATOR", sub: "Custom Barcode", icon: <QrCode className="w-5 h-5 text-[#00D4FF]" /> },
-  { title: "REMOVE BG", sub: "AI Cutout Tool", icon: <Eraser className="w-5 h-5 text-[#00D4FF]" /> },
-  { title: "AI ENHANCE", sub: "Photo Upscaler", icon: <Wand2 className="w-5 h-5 text-[#00D4FF]" /> },
-  { title: "IG STALKER", sub: "Profile Recon", icon: <Search className="w-5 h-5 text-[#00D4FF]" /> },
-  { title: "TIKTOK STALKER", sub: "Inspect Account", icon: <Search className="w-5 h-5 text-[#00D4FF]" /> },
-  { title: "TANYA USTADZ", sub: "Islamic Knowledge", icon: <BookOpen className="w-5 h-5 text-[#00D4FF]" /> },
-  { title: "WINDOWS QUOTES", sub: "Retro Dialogue", icon: <Layout className="w-5 h-5 text-[#00D4FF]" /> },
-  { title: "FAKE IG CHAT", sub: "DM Screen Mockup", icon: <MessageSquare className="w-5 h-5 text-[#00D4FF]" /> },
-  { title: "BRAT VIDEO", sub: "Green Screen Clip", icon: <Video className="w-5 h-5 text-[#00D4FF]" /> },
-  { title: "DISTRACTED BOY", sub: "Meme Generator", icon: <Smile className="w-5 h-5 text-[#00D4FF]" /> },
-  { title: "DOGE CHEEMS", sub: "Classic Meme Kit", icon: <Smile className="w-5 h-5 text-[#00D4FF]" /> },
-  { title: "SUB4UNLOCK", sub: "Shortlink Bypass", icon: <Lock className="w-5 h-5 text-[#00D4FF]" /> },
-  { title: "OSINT RECON", sub: "Cyber Terminal", icon: <Terminal className="w-5 h-5 text-[#00D4FF]" /> },
-];
+const TOOLS_LIST: ToolItem[] = [];
 
 export const ToolsPage: React.FC<ToolsPageProps> = ({ onBackToHome }) => {
   const [selectedTool, setSelectedTool] = useState<ToolItem | null>(null);
@@ -114,39 +76,50 @@ export const ToolsPage: React.FC<ToolsPageProps> = ({ onBackToHome }) => {
         </span>
       </header>
 
-      {/* 4. MAIN CONTENT GRID (2 COLUMNS) */}
-      <main className="relative z-10 max-w-5xl mx-auto px-4 py-6">
-        <div className="grid grid-cols-2 gap-4">
-          {TOOLS_LIST.map((tool) => (
-            <button
-              key={tool.title}
-              onClick={() => {
-                setSelectedTool(tool);
-                setInputVal('');
-                setExecResult(null);
-              }}
-              className="group text-left relative overflow-hidden rounded-[24px] backdrop-blur-[20px] bg-white/[0.08] border border-white/15 p-3.5 sm:p-4 flex items-center gap-3 transition-all duration-200 hover:bg-white/[0.14] active:scale-[0.96] shadow-[0_8px_32px_rgba(0,0,0,0.3)] cursor-pointer"
-            >
-              {/* Light reflection gradient on top */}
-              <div className="absolute top-0 left-0 right-0 h-[1px] bg-gradient-to-r from-transparent via-white/25 to-transparent pointer-events-none" />
-
-              {/* Icon Container with Accent Glow */}
-              <div className="w-11 h-11 rounded-[16px] bg-[#00D4FF]/15 border border-[#00D4FF]/30 flex items-center justify-center shrink-0 shadow-[0_0_12px_rgba(0,212,255,0.35)] group-hover:scale-110 transition-transform">
-                {tool.icon}
-              </div>
-
-              {/* Text Information */}
-              <div className="flex-1 min-w-0">
-                <h3 className="text-[12.5px] font-bold text-white uppercase tracking-[0.5px] truncate font-['MADE_Evolve_Sans_EVO','Space_Grotesk',sans-serif] group-hover:text-[#00D4FF] transition-colors">
-                  {tool.title}
-                </h3>
-                <p className="text-[10.5px] text-white/70 font-normal truncate mt-0.5 font-['Inter',sans-serif]">
-                  {tool.sub}
-                </p>
-              </div>
-            </button>
-          ))}
-        </div>
+      {/* 4. MAIN CONTENT AREA (EMPTY STATE) */}
+      <main className="relative z-10 max-w-5xl mx-auto px-4 py-16 flex flex-col items-center justify-center min-h-[60vh] text-center">
+        {TOOLS_LIST.length === 0 ? (
+          <div className="rounded-[24px] backdrop-blur-[20px] bg-white/[0.08] border border-white/15 p-8 max-w-md w-full flex flex-col items-center justify-center space-y-4 shadow-[0_8px_32px_rgba(0,0,0,0.3)] animate-in fade-in zoom-in duration-300">
+            <div className="w-16 h-16 rounded-2xl bg-[#00D4FF]/15 border border-[#00D4FF]/30 flex items-center justify-center text-[#00D4FF] shadow-[0_0_20px_rgba(0,212,255,0.25)]">
+              <Wrench className="w-8 h-8" />
+            </div>
+            <div className="space-y-1">
+              <h3 className="text-lg font-bold text-white uppercase tracking-[0.5px] font-['MADE_Evolve_Sans_EVO','Space_Grotesk',sans-serif]">
+                HALAMAN TOOLS KOSONG
+              </h3>
+              <p className="text-xs text-white/60 font-['Inter',sans-serif]">
+                Belum ada tools yang tersedia di halaman ini.
+              </p>
+            </div>
+          </div>
+        ) : (
+          <div className="grid grid-cols-2 gap-4 w-full">
+            {TOOLS_LIST.map((tool) => (
+              <button
+                key={tool.title}
+                onClick={() => {
+                  setSelectedTool(tool);
+                  setInputVal('');
+                  setExecResult(null);
+                }}
+                className="group text-left relative overflow-hidden rounded-[24px] backdrop-blur-[20px] bg-white/[0.08] border border-white/15 p-3.5 sm:p-4 flex items-center gap-3 transition-all duration-200 hover:bg-white/[0.14] active:scale-[0.96] shadow-[0_8px_32px_rgba(0,0,0,0.3)] cursor-pointer"
+              >
+                <div className="absolute top-0 left-0 right-0 h-[1px] bg-gradient-to-r from-transparent via-white/25 to-transparent pointer-events-none" />
+                <div className="w-11 h-11 rounded-[16px] bg-[#00D4FF]/15 border border-[#00D4FF]/30 flex items-center justify-center shrink-0 shadow-[0_0_12px_rgba(0,212,255,0.35)] group-hover:scale-110 transition-transform">
+                  {tool.icon}
+                </div>
+                <div className="flex-1 min-w-0">
+                  <h3 className="text-[12.5px] font-bold text-white uppercase tracking-[0.5px] truncate font-['MADE_Evolve_Sans_EVO','Space_Grotesk',sans-serif] group-hover:text-[#00D4FF] transition-colors">
+                    {tool.title}
+                  </h3>
+                  <p className="text-[10.5px] text-white/70 font-normal truncate mt-0.5 font-['Inter',sans-serif]">
+                    {tool.sub}
+                  </p>
+                </div>
+              </button>
+            ))}
+          </div>
+        )}
       </main>
 
       {/* 5. TOOL EXECUTION MODAL */}

@@ -4,29 +4,8 @@ import 'package:flutter/material.dart';
 class ToolsPage extends StatelessWidget {
   const ToolsPage({super.key});
 
-  // 20 Dummy Tools Data DAPP PROJECT
-  static final List<Map<String, dynamic>> _tools = [
-    {"title": "TIKTOK DL", "sub": "No Watermark HD", "icon": Icons.download_rounded},
-    {"title": "IG REELS DL", "sub": "Instagram Media", "icon": Icons.video_camera_back_rounded},
-    {"title": "YT DOWNLOADER", "sub": "MP3 & MP4 4K", "icon": Icons.play_circle_fill_rounded},
-    {"title": "FB VIDEO DL", "sub": "High Quality Post", "icon": Icons.share_rounded},
-    {"title": "TWITTER MEDIA", "sub": "Save Tweet Clips", "icon": Icons.flutter_dash_rounded},
-    {"title": "BRAT GENERATOR", "sub": "Aesthetic Text Art", "icon": Icons.auto_awesome_rounded},
-    {"title": "SERTIFIKAT TOLOL", "sub": "Fun Certificate", "icon": Icons.workspace_premium_rounded},
-    {"title": "QR GENERATOR", "sub": "Custom Barcode", "icon": Icons.qr_code_2_rounded},
-    {"title": "REMOVE BG", "sub": "AI Cutout Tool", "icon": Icons.layers_clear_rounded},
-    {"title": "AI ENHANCE", "sub": "Photo Upscaler", "icon": Icons.auto_fix_high_rounded},
-    {"title": "IG STALKER", "sub": "Profile Recon", "icon": Icons.person_search_rounded},
-    {"title": "TIKTOK STALKER", "sub": "Inspect Account", "icon": Icons.search_rounded},
-    {"title": "TANYA USTADZ", "sub": "Islamic Knowledge", "icon": Icons.menu_book_rounded},
-    {"title": "WINDOWS QUOTES", "sub": "Retro Dialogue", "icon": Icons.web_asset_rounded},
-    {"title": "FAKE IG CHAT", "sub": "DM Screen Mockup", "icon": Icons.chat_bubble_outline_rounded},
-    {"title": "BRAT VIDEO", "sub": "Green Screen Clip", "icon": Icons.videocam_rounded},
-    {"title": "DISTRACTED BOY", "sub": "Meme Generator", "icon": Icons.visibility_rounded},
-    {"title": "DOGE CHEEMS", "sub": "Classic Meme Kit", "icon": Icons.mood_rounded},
-    {"title": "SUB4UNLOCK", "sub": "Shortlink Bypass", "icon": Icons.lock_open_rounded},
-    {"title": "OSINT RECON", "sub": "Cyber Terminal", "icon": Icons.terminal_rounded},
-  ];
+  // Tools Data DAPP PROJECT
+  static final List<Map<String, dynamic>> _tools = [];
 
   @override
   Widget build(BuildContext context) {
@@ -75,34 +54,71 @@ class ToolsPage extends StatelessWidget {
             ),
           ),
 
-          // 3. Grid 2 Columns Glass Cards
+          // 3. Main Content / Empty State
           SafeArea(
-            child: GridView.builder(
-              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
-              itemCount: _tools.length,
-              gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-                crossAxisCount: 2,
-                crossAxisSpacing: 16,
-                mainAxisSpacing: 16,
-                childAspectRatio: 1.45,
-              ),
-              itemBuilder: (context, index) {
-                final tool = _tools[index];
-                return GlassCard(
-                  title: tool['title'] as String,
-                  subtitle: tool['sub'] as String,
-                  icon: tool['icon'] as IconData,
-                  onTap: () {
-                    ScaffoldMessenger.of(context).showSnackBar(
-                      SnackBar(
-                        content: Text("Membuka ${tool['title']}..."),
-                        duration: const Duration(seconds: 1),
+            child: _tools.isEmpty
+                ? Center(
+                    child: Container(
+                      margin: const EdgeInsets.symmetric(horizontal: 24),
+                      padding: const EdgeInsets.all(24),
+                      decoration: BoxDecoration(
+                        color: Colors.white.withOpacity(0.08),
+                        borderRadius: BorderRadius.circular(24),
+                        border: Border.all(color: Colors.white.withOpacity(0.15)),
                       ),
-                    );
-                  },
-                );
-              },
-            ),
+                      child: Column(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          Icon(Icons.build_rounded, size: 48, color: const Color(0xFF00D4FF)),
+                          const SizedBox(height: 12),
+                          const Text(
+                            "HALAMAN TOOLS KOSONG",
+                            style: TextStyle(
+                              color: Colors.white,
+                              fontSize: 16,
+                              fontWeight: FontWeight.bold,
+                              letterSpacing: 0.5,
+                            ),
+                          ),
+                          const SizedBox(height: 6),
+                          Text(
+                            "Belum ada tools yang tersedia di halaman ini.",
+                            textAlign: TextAlign.center,
+                            style: TextStyle(
+                              color: Colors.white.withOpacity(0.6),
+                              fontSize: 12,
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                  )
+                : GridView.builder(
+                    padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
+                    itemCount: _tools.length,
+                    gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+                      crossAxisCount: 2,
+                      crossAxisSpacing: 16,
+                      mainAxisSpacing: 16,
+                      childAspectRatio: 1.45,
+                    ),
+                    itemBuilder: (context, index) {
+                      final tool = _tools[index];
+                      return GlassCard(
+                        title: tool['title'] as String,
+                        subtitle: tool['sub'] as String,
+                        icon: tool['icon'] as IconData,
+                        onTap: () {
+                          ScaffoldMessenger.of(context).showSnackBar(
+                            SnackBar(
+                              content: Text("Membuka ${tool['title']}..."),
+                              duration: const Duration(seconds: 1),
+                            ),
+                          );
+                        },
+                      );
+                    },
+                  ),
           ),
         ],
       ),
